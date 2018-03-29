@@ -43,7 +43,7 @@ class TestHelpers(unittest.TestCase):
                                         args=[child_pid, setup_done])
         child.start()
         if setup_done.acquire(timeout=1.0):
-            helpers.kill_process_tree(logging.getLogger(), os.getpid(), timeout=1.0)
+            helpers.kill_process_tree(logging.getLogger(), os.getpid(), kill_root=True, timeout=1.0)
             # Process.is_alive doesnt work with SIGKILL
             if not psutil.pid_exists(child_pid.value):
                 child_process_killed.value = 1

@@ -204,15 +204,15 @@ def kill_using_shell(logger, pid, signal=signal.SIGTERM):
         return False
 
 
-def kill_process_tree(logger, pid, timeout=DEFAULT_TIME_TO_WAIT_AFTER_SIGTERM):
+def kill_process_tree(logger, pid, kill_root=False, timeout=DEFAULT_TIME_TO_WAIT_AFTER_SIGTERM):
     """
-    TODO(saguziel): also kill the root process after killing descendants
-  
+
     Kills the process's descendants. Kills using the `kill`
     shell command so that it can change users. Note: killing via PIDs
     has the potential to the wrong process if the process dies and the
     PID gets recycled in a narrow time window.
 
+    :param kill_root: kill the root process after killing descendants. False by default
     :param logger: logger
     :type logger: logging.Logger
     """
@@ -226,6 +226,10 @@ def kill_process_tree(logger, pid, timeout=DEFAULT_TIME_TO_WAIT_AFTER_SIGTERM):
     # the PID got reused.
     descendant_processes = [x for x in root_process.children(recursive=True)
                             if x.is_running()]
+
+    # Include the root process if needed
+    if kill_root and root_process.is_running():
+        descendant_processes.append(root_process)
 
     if len(descendant_processes) != 0:
         logger.info("Terminating descendant processes of {} PID: {}"

@@ -2528,6 +2528,10 @@ class LocalTaskJob(BaseJob):
                     self.log.info("Task exited with return code %s", return_code)
                     return
 
+                if self.terminating:
+                    self.log.warning("Task is terminating, no need to heartbeat.")
+                    return
+
                 # Periodically heartbeat so that the scheduler doesn't think this
                 # is a zombie
                 try:

@@ -33,7 +33,7 @@ class BashTaskRunner(BaseTaskRunner):
 
     def terminate(self):
         if self.process and psutil.pid_exists(self.process.pid):
-            kill_process_tree(self.log, self.process.pid)
+            kill_process_tree(self.log, self.process.pid, kill_root=True)
 
     def on_finish(self):
         super(BashTaskRunner, self).on_finish()
